@@ -1,0 +1,14 @@
+{
+    "name": "evento/shared",
+    "description": "Shared kernel: cross-cutting contracts, value objects, and base classes.",
+    "autoload": {
+        "psr-4": {
+            "Modules\\Shared\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Shared\\Tests\\": "tests/"
+        }
+    }
+}

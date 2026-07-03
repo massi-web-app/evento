@@ -3,6 +3,9 @@ includes:
 
 parameters:
     level: 8
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - identifier: trait.unused
     paths:
         - app
         - Modules

@@ -5,7 +5,10 @@
     "keywords": [],
     "priority": 0,
     "providers": [
-        
+
     ],
-    "files": []
+    "files": [],
+    "autoload": {
+        "psr-4": { "Modules\\Shared\\": "app/" }
+    }
 }

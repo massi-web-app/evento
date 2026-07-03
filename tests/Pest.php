@@ -14,6 +14,11 @@ use Tests\TestCase;
 |
 */
 
+uses(Tests\TestCase::class)->in(
+    'Feature',
+    '../Modules/*/tests/Feature',
+);
+
 pest()->extend(TestCase::class)
     // ->use(RefreshDatabase::class)
     ->in('Feature', 'Unit');
