@@ -15,7 +15,6 @@ use Modules\Shared\Concerns\HasPublicId;
 final class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
@@ -38,18 +37,17 @@ final class User extends Authenticatable
         'last_login_ip',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'status' => UserStatus::class,
-            'email_verified_at' => 'immutable_datetime',
-            'phone_verified_at' => 'immutable_datetime',
-            'last_login_at' => 'immutable_datetime',
-            'two_factor_enabled' => 'boolean',
-            'is_staff' => 'boolean',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'status' => UserStatus::class,
+        'email_verified_at' => 'immutable_datetime',
+        'phone_verified_at' => 'immutable_datetime',
+        'last_login_at' => 'immutable_datetime',
+        'two_factor_enabled' => 'boolean',
+        'is_staff' => 'boolean',
+        'password' => 'hashed',
+    ];
+
+
 
     protected static function newFactory(): UserFactory
     {

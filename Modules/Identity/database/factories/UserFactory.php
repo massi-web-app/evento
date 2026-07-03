@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Identity\Enums\UserStatus;
 use Modules\Identity\Models\User;
 
+/**
+ * @extends Factory<User>
+ */
 final class UserFactory extends Factory
 {
     protected $model = User::class;

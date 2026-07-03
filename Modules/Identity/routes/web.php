@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Modules\Identity\Http\Controllers\IdentityController;
+declare(strict_types=1);
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('identities', IdentityController::class)->names('identity');
-});
+use Illuminate\Support\Facades\Route;
+
+// endpointهای auth/OTP در قدم بعدی اینجا ثبت می‌شوند

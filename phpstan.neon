@@ -4,8 +4,14 @@ includes:
 parameters:
     level: 8
     treatPhpDocTypesAsCertain: false
-    ignoreErrors:
-        - identifier: trait.unused
     paths:
         - app
         - Modules
+    databaseMigrationsPath:
+        - database/migrations
+        - Modules/*/database/migrations
+    ignoreErrors:
+        -
+            identifier: method.notFound
+            paths:
+                - Modules/*/tests/Architecture/*
