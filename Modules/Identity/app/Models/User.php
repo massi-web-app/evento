@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Modules\Identity\Database\Factories\UserFactory;
 use Modules\Identity\Enums\UserStatus;
 use Modules\Shared\Concerns\HasPublicId;
@@ -19,6 +20,7 @@ final class User extends Authenticatable
     use Notifiable;
     use SoftDeletes;
     use HasPublicId;
+    use HasApiTokens;
 
     protected $fillable = [
         'first_name',
