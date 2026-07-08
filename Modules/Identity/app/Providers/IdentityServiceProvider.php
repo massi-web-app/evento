@@ -2,8 +2,11 @@
 
 namespace Modules\Identity\Providers;
 
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Modules\Identity\Contracts\PermissionChecker;
+use Modules\Identity\Services\CachedPermissionChecker;
+use Modules\Identity\Services\DatabasePermissionChecker;
 use Nwidart\Modules\Support\ModuleServiceProvider;
-use Illuminate\Console\Scheduling\Schedule;
 
 class IdentityServiceProvider extends ModuleServiceProvider
 {
@@ -36,11 +39,26 @@ class IdentityServiceProvider extends ModuleServiceProvider
 
     /**
      * Define module schedules.
-     * 
+     *
      * @param $schedule
      */
     // protected function configureSchedules(Schedule $schedule): void
     // {
     //     $schedule->command('inspire')->hourly();
     // }
+
+
+    public function register(): void
+    {
+
+        $this->app->register(EventServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
+
+        $this->app->singleton(PermissionChecker::class, function ($app): PermissionChecker {
+            return new CachedPermissionChecker(
+                inner: new DatabasePermissionChecker(),
+                cache: $app->make(CacheRepository::class),
+            );
+        });
+    }
 }
