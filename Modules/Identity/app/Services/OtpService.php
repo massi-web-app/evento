@@ -17,12 +17,13 @@ use Modules\Settings\Contracts\SettingsReader;
 final readonly class OtpService
 {
     public function __construct(
-        private Hasher $hasher,
+        private Hasher         $hasher,
         private SettingsReader $settings,
-    ) {}
+    )
+    {
+    }
 
     private const int CODE_LENGTH = 6;
-
     /**
      * صدور کد جدید برای یک شناسه (موبایل/ایمیل).
      *
@@ -46,8 +47,8 @@ final readonly class OtpService
             'channel' => $channel,
             'purpose' => $purpose,
             'code_hash' => $this->hasher->make($plainCode),
-            'max_attempts' => (int) $this->settings->get('otp.max_attempts'),
-            'expires_at' => now()->addSeconds((int) $this->settings->get('otp.expiry_seconds')),
+            'max_attempts' => (int)$this->settings->get('otp.max_attempts'),
+            'expires_at' => now()->addSeconds((int)$this->settings->get('otp.expiry_seconds')),
         ]);
 
         event(new OtpRequested(
@@ -55,7 +56,7 @@ final readonly class OtpService
             channel: $channel,
             purpose: $purpose,
             plainCode: $plainCode,
-            ttlSeconds: (int) $this->settings->get('otp.expiry_seconds'),
+            ttlSeconds: (int)$this->settings->get('otp.expiry_seconds'),
         ));
 
         return $otp;
@@ -81,13 +82,13 @@ final readonly class OtpService
             throw InvalidOtpException::expiredOrMissing();
         }
 
-        if (! $otp->hasAttemptsLeft()) {
+        if (!$otp->hasAttemptsLeft()) {
             throw InvalidOtpException::attemptsExhausted();
         }
 
         $otp->increment('attempts');
 
-        if (! $this->hasher->check($plainCode, $otp->code_hash)) {
+        if (!$this->hasher->check($plainCode, $otp->code_hash)) {
             throw InvalidOtpException::wrongCode();
         }
 
@@ -98,21 +99,24 @@ final readonly class OtpService
         return $otp->refresh();
     }
 
+
+
+    
     private function guardSendRate(string $identifier): void
     {
         $key = $this->sendKey($identifier);
-        $max = (int) $this->settings->get('otp.send_max_per_window');
+        $max = (int)$this->settings->get('otp.send_max_per_window');
 
         if (RateLimiter::tooManyAttempts($key, $max)) {
             throw OtpRateLimitExceededException::forSeconds(RateLimiter::availableIn($key));
         }
 
-        RateLimiter::hit($key, (int) $this->settings->get('otp.send_window_seconds'));
+        RateLimiter::hit($key, (int)$this->settings->get('otp.send_window_seconds'));
     }
 
     private function generateCode(): string
     {
-        $length = (int) $this->settings->get('otp.send_max_per_window');
+        $length = (int)$this->settings->get('otp.send_max_per_window');
         $max = (10 ** self::CODE_LENGTH) - 1;
 
         return str_pad((string) random_int(0, $max), self::CODE_LENGTH, '0', STR_PAD_LEFT);
