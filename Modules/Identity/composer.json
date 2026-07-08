@@ -29,5 +29,10 @@
     },
     "require": {
         "evento/settings": "*"
+    },
+    "replace": {
+        "evento/shared": "self.version",
+        "evento/identity": "self.version",
+        "evento/settings": "self.version"
     }
 }
