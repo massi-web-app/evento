@@ -25,5 +25,4 @@ enum UserStatus: int
             self::Banned => 'مسدود',
         };
     }
-
 }

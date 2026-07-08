@@ -20,7 +20,7 @@ final class UserFactory extends Factory
         return [
             'first_name' => fake('fa_IR')->firstName(),
             'last_name' => fake('fa_IR')->lastName(),
-            'phone' => '09' . fake()->unique()->numerify('#########'),
+            'phone' => '09'.fake()->unique()->numerify('#########'),
             'status' => UserStatus::Active,
             'locale' => 'fa',
             'timezone' => 'Asia/Tehran',
@@ -36,5 +36,4 @@ final class UserFactory extends Factory
     {
         return $this->state(['status' => UserStatus::Banned]);
     }
-
 }

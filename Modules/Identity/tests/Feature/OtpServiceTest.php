@@ -12,10 +12,13 @@ use Modules\Identity\Exceptions\InvalidOtpException;
 use Modules\Identity\Exceptions\OtpRateLimitExceededException;
 use Modules\Identity\Models\OtpCode;
 use Modules\Identity\Services\OtpService;
+use Modules\Settings\Database\Seeders\SettingDefinitionsSeeder;
+use Modules\Settings\Services\SettingsService;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
+    $this->seed(SettingDefinitionsSeeder::class);
     RateLimiter::clear('otp:send:09120000000');
 });
 
@@ -97,6 +100,19 @@ it('rejects an expired code', function (): void {
     $this->travel(3)->minutes();   // ttl=120s → منقضی
 
     $service->verify('09120000000', OtpPurpose::Login, $plain);
+})->throws(InvalidOtpException::class);
+
+it('honors runtime-changed ttl from settings', function (): void {
+    $this->seed(SettingDefinitionsSeeder::class);
+    app(SettingsService::class)
+        ->set('otp.expiry_seconds', 30);   // عملیات، مهلت را کم کرد
+
+    $plain = interceptPlainCode(app(OtpService::class));
+
+    /** @phpstan-ignore method.notFound (Pest binds $this to Laravel TestCase at runtime) */
+    $this->travel(45)->seconds();          // ۴۵ ثانیه — بیشتر از ۳۰، کمتر از ۱۲۰ قدیمی
+
+    app(OtpService::class)->verify('09120000000', OtpPurpose::Login, $plain);
 })->throws(InvalidOtpException::class);
 
 /** صدور کد و شکار کد خام از روی event — بدون دست زدن به internals */

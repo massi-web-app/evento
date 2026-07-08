@@ -1,4 +1,5 @@
 {
     "Shared": true,
-    "Identity": true
+    "Identity": true,
+    "Settings": true
 }

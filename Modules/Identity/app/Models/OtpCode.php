@@ -12,7 +12,6 @@ final class OtpCode extends Model
 {
     public const UPDATED_AT = null;
 
-
     protected $fillable = [
         'identifier',
         'channel',
@@ -29,8 +28,6 @@ final class OtpCode extends Model
         'consumed_at' => 'immutable_datetime',
     ];
 
-
-
     public function isExpired(): bool
     {
         return $this->expires_at->isPast();
@@ -45,6 +42,4 @@ final class OtpCode extends Model
     {
         return $this->attempts < $this->max_attempts;
     }
-
-
 }

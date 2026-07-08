@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Modules\Identity\Enums\UserStatus;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -18,7 +19,6 @@ return new class extends Migration {
             $table->string('first_name', 100)->nullable();
             $table->string('last_name', 100)->nullable();
             $table->string('display_name', 150)->nullable();
-
 
             $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
@@ -34,7 +34,6 @@ return new class extends Migration {
 
             $table->string('locale', 10)->default('fa');
             $table->string('timezone', 64)->default('Asia/Tehran');
-
 
             $table->boolean('two_factor_enabled')->default(false);
             $table->boolean('is_staff')->default(false);

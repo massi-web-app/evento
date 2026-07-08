@@ -40,13 +40,12 @@ class IdentityServiceProvider extends ModuleServiceProvider
     /**
      * Define module schedules.
      *
-     * @param $schedule
+     * @param  $schedule
      */
     // protected function configureSchedules(Schedule $schedule): void
     // {
     //     $schedule->command('inspire')->hourly();
     // }
-
 
     public function register(): void
     {
@@ -56,7 +55,7 @@ class IdentityServiceProvider extends ModuleServiceProvider
 
         $this->app->singleton(PermissionChecker::class, function ($app): PermissionChecker {
             return new CachedPermissionChecker(
-                inner: new DatabasePermissionChecker(),
+                inner: new DatabasePermissionChecker,
                 cache: $app->make(CacheRepository::class),
             );
         });

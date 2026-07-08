@@ -1,6 +1,5 @@
 <?php
 
-
 use Modules\Identity\Models\User;
 
 return [

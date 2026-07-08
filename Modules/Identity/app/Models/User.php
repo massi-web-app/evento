@@ -1,12 +1,12 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace Modules\Identity\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,12 +17,13 @@ use Modules\Shared\Concerns\HasPublicId;
 
 final class User extends Authenticatable
 {
+    use HasApiTokens;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+    use HasPublicId;
     use Notifiable;
     use SoftDeletes;
-    use HasPublicId;
-    use HasApiTokens;
 
     protected $fillable = [
         'first_name',
@@ -51,16 +52,11 @@ final class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-
     protected static function newFactory(): UserFactory
     {
         return UserFactory::new();
     }
 
-
-    /**
-     * @return BelongsToMany
-     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class)
@@ -81,4 +77,8 @@ final class User extends Authenticatable
             ->contains('name', $permissionName);
     }
 
+    public function organizers(): HasMany
+    {
+        return $this->hasMany(Organizer::class, 'owner_user_id');
+    }
 }

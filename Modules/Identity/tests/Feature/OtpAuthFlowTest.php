@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\RateLimiter;
 use Modules\Identity\Events\OtpRequested;
 use Modules\Identity\Events\UserRegistered;
 use Modules\Identity\Models\User;
+use Modules\Settings\Database\Seeders\SettingDefinitionsSeeder;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
+    $this->seed(SettingDefinitionsSeeder::class);
     RateLimiter::clear('otp:send:09121112233');
 });
 
@@ -22,7 +24,6 @@ it('completes the full login flow for a brand-new user', function (): void {
     Event::listen(OtpRequested::class, function (OtpRequested $e) use (&$plain): void {
         $plain = $e->plainCode;
     });
-
 
     $this->postJson(route('api.auth.otp.request'), ['phone' => '09121112233'])
         ->assertStatus(202);

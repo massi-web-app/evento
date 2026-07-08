@@ -11,8 +11,7 @@ final readonly class Money
     public function __construct(
         public int $amount,
         public string $currency,
-    )
-    {
+    ) {
         if ($amount < 0) {
             throw new InvalidArgumentException('Money amount cannot be negative.');
         }
@@ -33,6 +32,7 @@ final readonly class Money
     {
         return new self(0, $currency);
     }
+
     public function add(self $other): self
     {
         $this->assertSameCurrency($other);
@@ -54,6 +54,7 @@ final readonly class Money
             $this->currency,
         );
     }
+
     public function isZero(): bool
     {
         return $this->amount === 0;
@@ -73,5 +74,4 @@ final readonly class Money
             );
         }
     }
-
 }

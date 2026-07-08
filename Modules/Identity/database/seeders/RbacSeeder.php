@@ -9,7 +9,6 @@ use Modules\Identity\Models\Role;
 
 final class RbacSeeder extends Seeder
 {
-
     public function run(): void
     {
         $roles = [
@@ -25,5 +24,4 @@ final class RbacSeeder extends Seeder
             );
         }
     }
-
 }

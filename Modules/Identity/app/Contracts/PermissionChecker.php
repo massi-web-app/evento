@@ -6,7 +6,6 @@ namespace Modules\Identity\Contracts;
 
 interface PermissionChecker
 {
-
     public function userHasPermission(int $userId, string $permission): bool;
 
     public function userHasRole(int $userId, string $role): bool;

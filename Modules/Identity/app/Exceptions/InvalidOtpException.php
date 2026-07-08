@@ -8,7 +8,6 @@ use RuntimeException;
 
 final class InvalidOtpException extends RuntimeException
 {
-
     public static function wrongCode(): self
     {
         return new self('The provided OTP code is invalid.');
@@ -23,5 +22,4 @@ final class InvalidOtpException extends RuntimeException
     {
         return new self('Maximum verification attempts exceeded.');
     }
-
 }

@@ -10,6 +10,7 @@ use Modules\Identity\Enums\OtpPurpose;
 use Modules\Identity\Enums\UserStatus;
 use Modules\Identity\Events\UserRegistered;
 use Modules\Identity\Exceptions\AccountNotAllowedException;
+use Modules\Identity\Exceptions\InvalidOtpException;
 use Modules\Identity\Models\User;
 
 final readonly class PhoneAuthService
@@ -21,7 +22,7 @@ final readonly class PhoneAuthService
     /**
      * ورود/ثبت‌نام با موبایل: verify کد → find-or-create → صدور توکن.
      *
-     * @throws \Modules\Identity\Exceptions\InvalidOtpException
+     * @throws InvalidOtpException
      * @throws AccountNotAllowedException
      */
     public function loginWithOtp(

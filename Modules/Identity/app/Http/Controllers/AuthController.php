@@ -15,8 +15,6 @@ use Modules\Identity\Services\PhoneAuthService;
 
 final class AuthController extends Controller
 {
-
-
     public function requestOtp(RequestOtpRequest $request, OtpService $otpService): JsonResponse
     {
         $otpService->issue($request->phone(), OtpChannel::Sms, OtpPurpose::Login);
@@ -24,24 +22,23 @@ final class AuthController extends Controller
         return response()->json([
             'message' => 'در صورت معتبر بودن شماره، کد تأیید ارسال شد.',
             'ttl' => (int) config('identity.otp.ttl_seconds'),
-        ],202);
+        ], 202);
     }
 
-
-    public function verifyOtp(VerifyOtpRequest $request, PhoneAuthService $authService):JsonResponse
+    public function verifyOtp(VerifyOtpRequest $request, PhoneAuthService $authService): JsonResponse
     {
-        $result=$authService->loginWithOtp(
+        $result = $authService->loginWithOtp(
             $request->phone(),
             $request->code(),
             $request->deviceName(),
             $request->ip(),
             $request->userAgent()
         );
+
         return response()->json([
             'token' => $result->token,
             'user_public_id' => $result->userPublicId,
             'is_new_user' => $result->isNewUser,
         ], $result->isNewUser ? 201 : 200);
     }
-
 }

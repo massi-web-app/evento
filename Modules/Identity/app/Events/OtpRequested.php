@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Identity\Events;
@@ -11,11 +12,11 @@ use SensitiveParameter;
 final readonly class OtpRequested extends DomainEvent
 {
     public function __construct(
-        public string                       $identifier,
-        public OtpChannel                   $channel,
-        public OtpPurpose                   $purpose,
+        public string $identifier,
+        public OtpChannel $channel,
+        public OtpPurpose $purpose,
         #[SensitiveParameter] public string $plainCode,
-        public int                          $ttlSeconds,
+        public int $ttlSeconds,
     ) {
         parent::__construct();
     }

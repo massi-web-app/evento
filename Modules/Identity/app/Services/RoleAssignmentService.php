@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Modules\Identity\Services;
 
@@ -10,7 +10,6 @@ use Modules\Identity\Models\User;
 
 final readonly class RoleAssignmentService
 {
-
     public function __construct(
         private PermissionChecker $permissionChecker,
     ) {}

@@ -12,12 +12,16 @@ use Modules\Identity\Events\OtpRequested;
 use Modules\Identity\Exceptions\InvalidOtpException;
 use Modules\Identity\Exceptions\OtpRateLimitExceededException;
 use Modules\Identity\Models\OtpCode;
+use Modules\Settings\Contracts\SettingsReader;
 
 final readonly class OtpService
 {
     public function __construct(
         private Hasher $hasher,
+        private SettingsReader $settings,
     ) {}
+
+    private const int CODE_LENGTH = 6;
 
     /**
      * صدور کد جدید برای یک شناسه (موبایل/ایمیل).
@@ -42,8 +46,8 @@ final readonly class OtpService
             'channel' => $channel,
             'purpose' => $purpose,
             'code_hash' => $this->hasher->make($plainCode),
-            'max_attempts' => (int) config('identity.otp.max_attempts'),
-            'expires_at' => now()->addSeconds((int) config('identity.otp.ttl_seconds')),
+            'max_attempts' => (int) $this->settings->get('otp.max_attempts'),
+            'expires_at' => now()->addSeconds((int) $this->settings->get('otp.expiry_seconds')),
         ]);
 
         event(new OtpRequested(
@@ -51,7 +55,7 @@ final readonly class OtpService
             channel: $channel,
             purpose: $purpose,
             plainCode: $plainCode,
-            ttlSeconds: (int) config('identity.otp.ttl_seconds'),
+            ttlSeconds: (int) $this->settings->get('otp.expiry_seconds'),
         ));
 
         return $otp;
@@ -97,21 +101,21 @@ final readonly class OtpService
     private function guardSendRate(string $identifier): void
     {
         $key = $this->sendKey($identifier);
-        $max = (int) config('identity.otp.send_limit.max_per_window');
+        $max = (int) $this->settings->get('otp.send_max_per_window');
 
         if (RateLimiter::tooManyAttempts($key, $max)) {
             throw OtpRateLimitExceededException::forSeconds(RateLimiter::availableIn($key));
         }
 
-        RateLimiter::hit($key, (int) config('identity.otp.send_limit.window_seconds'));
+        RateLimiter::hit($key, (int) $this->settings->get('otp.send_window_seconds'));
     }
 
     private function generateCode(): string
     {
-        $length = (int) config('identity.otp.length');
-        $max = (10 ** $length) - 1;
+        $length = (int) $this->settings->get('otp.send_max_per_window');
+        $max = (10 ** self::CODE_LENGTH) - 1;
 
-        return str_pad((string) random_int(0, $max), $length, '0', STR_PAD_LEFT);
+        return str_pad((string) random_int(0, $max), self::CODE_LENGTH, '0', STR_PAD_LEFT);
     }
 
     private function sendKey(string $identifier): string

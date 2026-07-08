@@ -1,8 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Shared\Concerns;
-use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Support\Str;
 
 /**
@@ -19,9 +20,9 @@ trait HasPublicId
         });
 
     }
+
     public function getRouteKeyName(): string
     {
         return 'public_id';
     }
-
 }

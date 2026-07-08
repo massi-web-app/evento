@@ -10,7 +10,6 @@ use Modules\Identity\Models\Role;
 
 final class DatabasePermissionChecker implements PermissionChecker
 {
-
     public function userHasPermission(int $userId, string $permission): bool
     {
         return Permission::query()

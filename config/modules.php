@@ -134,7 +134,6 @@ return [
         */
         'app_folder' => 'app/',
 
-
         // روشن — با ماژول ساخته شوند:
 
         /*
@@ -146,8 +145,8 @@ return [
         */
         'generator' => [
             // app/
-            'contracts'      => ['path' => 'app/Contracts', 'generate' => true],
-            'dtos'           => ['path' => 'app/DTOs', 'generate' => true],
+            'contracts' => ['path' => 'app/Contracts', 'generate' => true],
+            'dtos' => ['path' => 'app/DTOs', 'generate' => true],
 
             'actions' => ['path' => 'app/Actions', 'generate' => false],
             'casts' => ['path' => 'app/Casts', 'generate' => false],

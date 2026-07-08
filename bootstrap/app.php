@@ -5,7 +5,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Modules\Identity\Exceptions\AccountNotAllowedException;
 use Modules\Identity\Exceptions\InvalidOtpException;
+use Modules\Identity\Exceptions\OrganizerAlreadyExistsException;
 use Modules\Identity\Exceptions\OtpRateLimitExceededException;
+use Modules\Settings\Exceptions\SettingNotDefinedException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,5 +31,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (AccountNotAllowedException $e) {
             return response()->json(['message' => 'حساب شما امکان ورود ندارد.'], 403);
+        });
+
+        $exceptions->render(function (OrganizerAlreadyExistsException $e) {
+            return response()->json(['message' => 'شما قبلاً یک پروفایل سازنده دارید.'], 409);
+        });
+
+        $exceptions->render(function (SettingNotDefinedException $e) {
+            return response()->json(['message' => 'شما قبلاً یک پروفایل سازنده دارید.'], 409);
         });
     })->create();

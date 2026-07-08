@@ -8,7 +8,6 @@ use RuntimeException;
 
 final class OtpRateLimitExceededException extends RuntimeException
 {
-
     public static function forSeconds(int $retryAfter): self
     {
         $e = new self("Too many OTP requests. Retry after {$retryAfter} seconds.");
@@ -18,5 +17,4 @@ final class OtpRateLimitExceededException extends RuntimeException
     }
 
     public int $retryAfter = 0;
-
 }

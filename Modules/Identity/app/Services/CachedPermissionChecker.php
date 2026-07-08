@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Modules\Identity\Services;
+
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Modules\Identity\Contracts\PermissionChecker;
 

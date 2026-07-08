@@ -28,7 +28,6 @@ return new class extends Migration
             $table->dateTime('expires_at');
             $table->dateTime('consumed_at')->nullable();
 
-
             $table->timestamps();
 
             $table->index(['identifier', 'purpose', 'expires_at']);

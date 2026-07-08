@@ -1,13 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Identity\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class VerifyOtpRequest extends FormREquest
+final class VerifyOtpRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -24,12 +24,12 @@ final class VerifyOtpRequest extends FormREquest
 
     public function phone(): string
     {
-        return (string)$this->validated('phone');
+        return (string) $this->validated('phone');
     }
 
     public function code(): string
     {
-        return (string)$this->validated('code');
+        return (string) $this->validated('code');
     }
 
     public function deviceName(): ?string
@@ -40,5 +40,4 @@ final class VerifyOtpRequest extends FormREquest
         return $this->validated('device_name');
 
     }
-
 }

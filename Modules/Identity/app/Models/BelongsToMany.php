@@ -2,7 +2,4 @@
 
 namespace Modules\Identity\Models;
 
-class BelongsToMany
-{
-
-}
+class BelongsToMany {}

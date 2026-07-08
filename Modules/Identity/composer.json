@@ -26,5 +26,8 @@
         "psr-4": {
             "Modules\\Identity\\Tests\\": "tests/"
         }
+    },
+    "require": {
+        "evento/settings": "*"
     }
 }

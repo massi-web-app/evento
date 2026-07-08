@@ -14,7 +14,7 @@ use Tests\TestCase;
 |
 */
 
-uses(Tests\TestCase::class)->in(
+uses(TestCase::class)->in(
     'Feature',
     '../Modules/*/tests/Feature',
 );
@@ -22,7 +22,7 @@ uses(Tests\TestCase::class)->in(
 pest()->extend(TestCase::class)
     // ->use(RefreshDatabase::class)
     ->in('Feature', 'Unit');
-pest()->in(__DIR__ . '/../modules');
+pest()->in(__DIR__.'/../modules');
 
 /*
 |--------------------------------------------------------------------------

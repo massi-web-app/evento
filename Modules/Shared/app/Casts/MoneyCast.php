@@ -11,20 +11,20 @@ use Modules\Shared\ValueObjects\Money;
 /**
  * @implements CastsAttributes<Money, Money>
  */
-final class MoneyCast implements  CastsAttributes
+final class MoneyCast implements CastsAttributes
 {
-
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Money
     {
-        if($value === null) {
+        if ($value === null) {
             return null;
         }
+
         return Money::of((int) $value, $attributes['currency'] ?? 'IRR');
 
     }
 
     /**
-     * @param array<string, mixed> $attributes
+     * @param  array<string, mixed>  $attributes
      * @return array<string, int|string|null>
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): array
@@ -32,7 +32,6 @@ final class MoneyCast implements  CastsAttributes
         if ($value === null) {
             return [$key => null];
         }
-
 
         if (! $value instanceof Money) {
             throw new \InvalidArgumentException("The {$key} attribute must be a Money instance.");

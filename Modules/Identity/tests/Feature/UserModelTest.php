@@ -8,7 +8,6 @@ use Modules\Identity\Models\User;
 
 uses(RefreshDatabase::class);
 
-
 it('generates a ULID public_id on creation', function (): void {
     $user = User::factory()->create();
 
@@ -23,7 +22,7 @@ it('casts status to UserStatus enum', function (): void {
 });
 
 it('uses public_id for route model binding', function (): void {
-    expect((new User())->getRouteKeyName())->toBe('public_id');
+    expect((new User)->getRouteKeyName())->toBe('public_id');
 });
 
 it('soft deletes instead of destroying the row', function (): void {
@@ -34,4 +33,3 @@ it('soft deletes instead of destroying the row', function (): void {
     expect(User::withTrashed()->find($user->id))->not->toBeNull()
         ->and(User::find($user->id))->toBeNull();
 });
-

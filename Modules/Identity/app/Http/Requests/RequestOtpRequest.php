@@ -8,7 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class RequestOtpRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -26,7 +25,7 @@ final class RequestOtpRequest extends FormRequest
 
     public function phone(): string
     {
-        return (string)$this->validated('phone');
+        return (string) $this->validated('phone');
 
     }
 }
