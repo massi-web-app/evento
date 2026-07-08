@@ -98,9 +98,6 @@ final readonly class OtpService
 
         return $otp->refresh();
     }
-
-
-
     
     private function guardSendRate(string $identifier): void
     {
