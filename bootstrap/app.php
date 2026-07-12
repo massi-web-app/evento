@@ -11,6 +11,9 @@ use Modules\Identity\Exceptions\AccountNotAllowedException;
 use Modules\Identity\Exceptions\InvalidOtpException;
 use Modules\Identity\Exceptions\OrganizerAlreadyExistsException;
 use Modules\Identity\Exceptions\OtpRateLimitExceededException;
+use Modules\Orders\Exceptions\IllegalOrderTransitionException;
+use Modules\Orders\Exceptions\InsufficientCapacityException;
+use Modules\Orders\Exceptions\InvalidQuantityException;
 use Modules\Settings\Exceptions\SettingNotDefinedException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -60,5 +63,17 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (IllegalEventTransitionException $e) {
             return response()->json(['message' => 'این تغییر وضعیت برای رویداد مجاز نیست.'], 409);
+        });
+
+        $exceptions->render(function (IllegalOrderTransitionException $e) {
+            return response()->json(['message' => 'این تغییر وضعیت برای سفارش مجاز نیست.'], 409);
+        });
+
+        $exceptions->render(function (InsufficientCapacityException $e) {
+            return response()->json(['message' => 'ظرفیت کافی برای این تعداد بلیت موجود نیست.'], 409);
+        });
+
+        $exceptions->render(function (InvalidQuantityException $e) {
+            return response()->json(['message' => 'تعداد درخواستی خارج از محدودهٔ مجاز است.'], 422);
         });
     })->create();

@@ -2,8 +2,10 @@
 
 namespace Modules\Orders\Providers;
 
+use Modules\Orders\Contracts\CapacityCounter;
+use Modules\Orders\Services\InMemoryCapacityCounter;
+use Modules\Orders\Services\RedisCapacityCounter;
 use Nwidart\Modules\Support\ModuleServiceProvider;
-use Illuminate\Console\Scheduling\Schedule;
 
 class OrdersServiceProvider extends ModuleServiceProvider
 {
@@ -36,11 +38,22 @@ class OrdersServiceProvider extends ModuleServiceProvider
 
     /**
      * Define module schedules.
-     * 
+     *
      * @param $schedule
      */
     // protected function configureSchedules(Schedule $schedule): void
     // {
     //     $schedule->command('inspire')->hourly();
     // }
+
+    public function register(): void
+    {
+
+        parent::register();
+        $this->app->singleton(CapacityCounter::class, function (): CapacityCounter {
+            return $this->app->environment('testing')
+                ? new InMemoryCapacityCounter()
+                : new RedisCapacityCounter();
+        });
+    }
 }

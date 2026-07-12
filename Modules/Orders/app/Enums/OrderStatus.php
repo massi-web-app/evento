@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Orders\Enums;
 
-enum orderStatus: int
+enum OrderStatus: int
 {
     case Pending = 1;
     case AwaitingPayment = 2;
