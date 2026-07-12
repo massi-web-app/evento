@@ -3,6 +3,10 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Modules\Events\Exceptions\IllegalEventTransitionException;
+use Modules\Events\Exceptions\InvalidEventScheduleException;
+use Modules\Events\Exceptions\OrganizerNotActiveException;
+use Modules\Events\Exceptions\VenueRequiredException;
 use Modules\Identity\Exceptions\AccountNotAllowedException;
 use Modules\Identity\Exceptions\InvalidOtpException;
 use Modules\Identity\Exceptions\OrganizerAlreadyExistsException;
@@ -39,5 +43,22 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (SettingNotDefinedException $e) {
             return response()->json(['message' => 'شما قبلاً یک پروفایل سازنده دارید.'], 409);
+        });
+
+
+        $exceptions->render(function (VenueRequiredException $e) {
+            return response()->json(['message' => 'برای رویداد حضوری انتخاب محل برگزاری الزامی است.'], 422);
+        });
+
+        $exceptions->render(function (InvalidEventScheduleException $e) {
+            return response()->json(['message' => 'زمان پایان رویداد باید بعد از زمان شروع باشد.'], 422);
+        });
+
+        $exceptions->render(function (OrganizerNotActiveException $e) {
+            return response()->json(['message' => 'پروفایل سازندهٔ شما فعال نیست.'], 403);
+        });
+
+        $exceptions->render(function (IllegalEventTransitionException $e) {
+            return response()->json(['message' => 'این تغییر وضعیت برای رویداد مجاز نیست.'], 409);
         });
     })->create();

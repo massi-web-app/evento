@@ -3,8 +3,11 @@
 namespace Modules\Catalog\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Modules\Catalog\Events\CategoryTreeChanged;
 use Modules\Catalog\Listeners\FlushCategoryTreeCache;
+use Modules\Events\Models\Event;
+use Modules\Events\Policies\EventPolicy;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,7 @@ class EventServiceProvider extends ServiceProvider
         ]
     ];
 
+
     /**
      * Indicates if events should be discovered.
      *
@@ -29,5 +33,13 @@ class EventServiceProvider extends ServiceProvider
     /**
      * Configure the proper event listeners for email verification.
      */
-    protected function configureEmailVerification(): void {}
+    protected function configureEmailVerification(): void
+    {
+    }
+
+    public function boot(): void
+    {
+        Gate::policy(Event::class, EventPolicy::class);
+        parent::boot();
+    }
 }
