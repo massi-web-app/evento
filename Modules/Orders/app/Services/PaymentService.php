@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\Orders\Contracts\PaymentGateway;
 use Modules\Orders\Enums\OrderStatus;
 use Modules\Orders\Enums\PaymentStatus;
+use Modules\Orders\Events\OrderPaid;
 use Modules\Orders\Events\PaymentVerified;
 use Modules\Orders\Exceptions\PaymentNotPayableException;
 use Modules\Orders\Exceptions\PaymentVerificationFailedException;
@@ -53,6 +54,7 @@ final readonly class PaymentService
             'gateway_token' => $init->gatewayToken,
             'gateway_meta' => ['redirect_url' => $init->redirectUrl],
         ])->save();
+
 
         return $payment->refresh();
     }
@@ -104,6 +106,9 @@ final readonly class PaymentService
                 amount: $fresh->amount->amount,
                 gatewayRef: (string) $result->referenceId,
             ));
+
+            event(new OrderPaid(orderPublicId: $fresh->order->public_id));
+
 
             return $fresh->refresh();
         });

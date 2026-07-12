@@ -24,12 +24,6 @@ beforeEach(function (): void {
     $this->seed(SettingDefinitionsSeeder::class);
 });
 
-function heldOrder(): Order
-{
-    $tt = makeOnSaleTicketType();
-
-    return app(HoldService::class)->hold(User::factory()->create()->id, $tt, 2);
-}
 
 it('completes the happy path: initiate → callback → paid', function (): void {
     EventFacade::fake([PaymentVerified::class]);

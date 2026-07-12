@@ -4,5 +4,6 @@
     "Settings": true,
     "Catalog": true,
     "Events": true,
-    "Orders": true
+    "Orders": true,
+    "Ticketing": true
 }

@@ -4,7 +4,9 @@ namespace Modules\Orders\Providers;
 
 use Modules\Orders\Console\ExpireOverdueHoldsCommand;
 use Modules\Orders\Contracts\CapacityCounter;
+use Modules\Orders\Contracts\PaidOrderReader;
 use Modules\Orders\Contracts\PaymentGateway;
+use Modules\Orders\Services\DatabasePaidOrderReader;
 use Modules\Orders\Services\Gateways\FakeGateway;
 use Modules\Orders\Services\InMemoryCapacityCounter;
 use Modules\Orders\Services\RedisCapacityCounter;
@@ -57,6 +59,8 @@ class OrdersServiceProvider extends ModuleServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([ExpireOverdueHoldsCommand::class]);
         }
+
+        $this->app->singleton(PaidOrderReader::class, DatabasePaidOrderReader::class);
 
         $this->app->singleton(PaymentGateway::class, function (): PaymentGateway {
             return match (config('orders.gateway', 'fake')) {

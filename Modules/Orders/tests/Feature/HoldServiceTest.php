@@ -22,21 +22,7 @@ beforeEach(function (): void {
     $this->seed(SettingDefinitionsSeeder::class);
 });
 
-function makeOnSaleTicketType(int $capacity = 10): TicketType
-{
-    $event = makeEventFor();
-    $session = $event->sessions()->firstOrFail();
 
-    $tt = $session->ticketTypes()->make(['name' => 'عادی', 'capacity' => $capacity]);
-    $tt->save();
-    $tt->prices()->create([
-        'amount' => Money::irr(500_000),
-        'starts_at' => now()->subDay(),
-        'ends_at' => null,
-    ]);
-
-    return $tt->refresh()->load('prices', 'session');
-}
 
 it('holds capacity and creates a pending order with snapshot and deadline', function (): void {
     $tt = makeOnSaleTicketType();
