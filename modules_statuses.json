@@ -3,5 +3,6 @@
     "Identity": true,
     "Settings": true,
     "Catalog": true,
-    "Events": true
+    "Events": true,
+    "Orders": true
 }
