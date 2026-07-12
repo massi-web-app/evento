@@ -14,6 +14,8 @@ use Modules\Identity\Exceptions\OtpRateLimitExceededException;
 use Modules\Orders\Exceptions\IllegalOrderTransitionException;
 use Modules\Orders\Exceptions\InsufficientCapacityException;
 use Modules\Orders\Exceptions\InvalidQuantityException;
+use Modules\Orders\Exceptions\PaymentNotPayableException;
+use Modules\Orders\Exceptions\PaymentVerificationFailedException;
 use Modules\Settings\Exceptions\SettingNotDefinedException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -75,5 +77,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (InvalidQuantityException $e) {
             return response()->json(['message' => 'تعداد درخواستی خارج از محدودهٔ مجاز است.'], 422);
+        });
+
+        $exceptions->render(function (PaymentVerificationFailedException $e) {
+            return response()->json(['message' => 'مشکل از سمت پرداختی به وجود آمده.'], 409);
+        });
+
+        $exceptions->render(function (PaymentNotPayableException $e) {
+            return response()->json(['message' => 'مشکل پرداختی به وجود آمد'], 402);
         });
     })->create();

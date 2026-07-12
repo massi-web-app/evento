@@ -4,9 +4,12 @@ namespace Modules\Orders\Providers;
 
 use Modules\Orders\Console\ExpireOverdueHoldsCommand;
 use Modules\Orders\Contracts\CapacityCounter;
+use Modules\Orders\Contracts\PaymentGateway;
+use Modules\Orders\Services\Gateways\FakeGateway;
 use Modules\Orders\Services\InMemoryCapacityCounter;
 use Modules\Orders\Services\RedisCapacityCounter;
 use Nwidart\Modules\Support\ModuleServiceProvider;
+use RuntimeException;
 
 class OrdersServiceProvider extends ModuleServiceProvider
 {
@@ -54,6 +57,13 @@ class OrdersServiceProvider extends ModuleServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([ExpireOverdueHoldsCommand::class]);
         }
+
+        $this->app->singleton(PaymentGateway::class, function (): PaymentGateway {
+            return match (config('orders.gateway', 'fake')) {
+                'fake' => new FakeGateway(),
+                default => throw new RuntimeException('Unknown payment gateway configured.'),
+            };
+        });
         $this->app->singleton(CapacityCounter::class, function (): CapacityCounter {
             return $this->app->environment('testing')
                 ? new InMemoryCapacityCounter()
