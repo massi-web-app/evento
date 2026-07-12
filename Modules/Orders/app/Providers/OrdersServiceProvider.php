@@ -2,6 +2,7 @@
 
 namespace Modules\Orders\Providers;
 
+use Modules\Orders\Console\ExpireOverdueHoldsCommand;
 use Modules\Orders\Contracts\CapacityCounter;
 use Modules\Orders\Services\InMemoryCapacityCounter;
 use Modules\Orders\Services\RedisCapacityCounter;
@@ -50,6 +51,9 @@ class OrdersServiceProvider extends ModuleServiceProvider
     {
 
         parent::register();
+        if ($this->app->runningInConsole()) {
+            $this->commands([ExpireOverdueHoldsCommand::class]);
+        }
         $this->app->singleton(CapacityCounter::class, function (): CapacityCounter {
             return $this->app->environment('testing')
                 ? new InMemoryCapacityCounter()
