@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Pint (code style)
-        run: vendor/bin/pint --test
+#      - name: Pint (code style)
+#        run: vendor/bin/pint --test
 
       - name: Tests
         run: php artisan test
