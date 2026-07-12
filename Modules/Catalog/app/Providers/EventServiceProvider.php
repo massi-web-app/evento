@@ -3,6 +3,8 @@
 namespace Modules\Catalog\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Catalog\Events\CategoryTreeChanged;
+use Modules\Catalog\Listeners\FlushCategoryTreeCache;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,11 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    protected $listen = [];
+    protected $listen = [
+        CategoryTreeChanged::class => [
+            FlushCategoryTreeCache::class,
+        ]
+    ];
 
     /**
      * Indicates if events should be discovered.

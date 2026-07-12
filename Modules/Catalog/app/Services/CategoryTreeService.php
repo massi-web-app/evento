@@ -8,6 +8,7 @@ namespace Modules\Catalog\Services;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Modules\Catalog\Events\CategoryTreeChanged;
 use Modules\Catalog\Exceptions\CategoryCycleException;
 use Modules\Catalog\Models\Category;
 
@@ -35,6 +36,8 @@ final class CategoryTreeService
             $category->forceFill([
                 'path' => ($parent?->path ?? '/') . $category->id . '/',
             ])->save();
+
+            event(new CategoryTreeChanged($category->slug, 'created'));
 
             return $category;
         });
@@ -68,6 +71,8 @@ final class CategoryTreeService
                     'depth' => DB::raw('depth + (' . $depthDelta . ')'),
                 ]);
         });
+
+        event(new CategoryTreeChanged($category->slug, 'moved'));
 
     }
 
