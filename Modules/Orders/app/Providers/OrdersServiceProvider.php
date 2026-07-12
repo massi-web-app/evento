@@ -2,10 +2,13 @@
 
 namespace Modules\Orders\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Modules\Orders\Console\ExpireOverdueHoldsCommand;
 use Modules\Orders\Contracts\CapacityCounter;
 use Modules\Orders\Contracts\PaidOrderReader;
 use Modules\Orders\Contracts\PaymentGateway;
+use Modules\Orders\Models\Order;
+use Modules\Orders\Policies\OrderPolicy;
 use Modules\Orders\Services\DatabasePaidOrderReader;
 use Modules\Orders\Services\Gateways\FakeGateway;
 use Modules\Orders\Services\InMemoryCapacityCounter;
@@ -73,5 +76,13 @@ class OrdersServiceProvider extends ModuleServiceProvider
                 ? new InMemoryCapacityCounter()
                 : new RedisCapacityCounter();
         });
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+        Gate::policy(Order::class, OrderPolicy::class);
+
+
     }
 }
