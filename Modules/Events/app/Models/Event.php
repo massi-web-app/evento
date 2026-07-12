@@ -6,6 +6,8 @@ namespace Modules\Events\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Events\Database\Factories\EventFactory;
 use Modules\Events\Enums\EventFormat;
 use Modules\Events\Enums\EventStatus;
@@ -16,6 +18,7 @@ final class Event extends Model
 
     use HasFactory;
     use HasPublicId;
+    use SoftDeletes;
 
     protected $fillable = [
         'category_id',
@@ -59,6 +62,12 @@ final class Event extends Model
     {
         return $this->capacity_total !== null
             && $this->tickets_sold_cache >= $this->capacity_total;
+    }
+
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(EventSession::class)
+            ->orderBy('starts_at');
     }
 
 

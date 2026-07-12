@@ -3,8 +3,10 @@
 namespace Modules\Identity\Providers;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Modules\Identity\Contracts\OrganizerReader;
 use Modules\Identity\Contracts\PermissionChecker;
 use Modules\Identity\Services\CachedPermissionChecker;
+use Modules\Identity\Services\DatabaseOrganizerReader;
 use Modules\Identity\Services\DatabasePermissionChecker;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 
@@ -52,6 +54,8 @@ class IdentityServiceProvider extends ModuleServiceProvider
 
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+
+        $this->app->singleton(OrganizerReader::class, DatabaseOrganizerReader::class);
 
         $this->app->singleton(PermissionChecker::class, function ($app): PermissionChecker {
             return new CachedPermissionChecker(
