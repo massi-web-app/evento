@@ -2,5 +2,6 @@
     "Shared": true,
     "Identity": true,
     "Settings": true,
-    "Catalog": true
+    "Catalog": true,
+    "Events": true
 }

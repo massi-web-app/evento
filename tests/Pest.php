@@ -24,6 +24,8 @@ pest()->extend(TestCase::class)
     ->in('Feature', 'Unit');
 pest()->in(__DIR__.'/../modules');
 
+require_once __DIR__ . '/../Modules/Events/tests/Helpers.php';
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

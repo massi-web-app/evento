@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Catalog\Database\Factories\CategoryFactory;
 
 final class Category extends Model
 {
@@ -57,6 +58,11 @@ final class Category extends Model
             && $other->path !== null
             && $this !== $other
             && str_starts_with($this->path, $other->path);
+    }
+
+    public static function newFactory(): CategoryFactory
+    {
+        return CategoryFactory::new();
     }
 
 }
