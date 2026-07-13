@@ -3,10 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Modules\Events\Models\TicketType;
+use Modules\Events\Contracts\SellableTicketTypes;
 use Modules\Identity\Database\Seeders\RbacSeeder;
 use Modules\Identity\Models\User;
-use Modules\Orders\Contracts\CapacityCounter;
 use Modules\Orders\Enums\OrderStatus;
 use Modules\Orders\Exceptions\InsufficientCapacityException;
 use Modules\Orders\Exceptions\InvalidQuantityException;
@@ -22,13 +21,12 @@ beforeEach(function (): void {
     $this->seed(SettingDefinitionsSeeder::class);
 });
 
-
-
 it('holds capacity and creates a pending order with snapshot and deadline', function (): void {
     $tt = makeOnSaleTicketType();
+    $sellable = app(SellableTicketTypes::class)->byPublicId($tt->public_id);
     $user = User::factory()->create();
 
-    $order = app(HoldService::class)->hold($user->id, $tt, 2);
+    $order = app(HoldService::class)->hold($user->id, $sellable, 2);
 
     expect($order->status)->toBe(OrderStatus::Pending)
         ->and($order->hold_expires_at)->not->toBeNull()
@@ -41,19 +39,21 @@ it('holds capacity and creates a pending order with snapshot and deadline', func
 
 it('rejects quantities outside per-order bounds', function (): void {
     $tt = makeOnSaleTicketType();
+    $sellable = app(SellableTicketTypes::class)->byPublicId($tt->public_id);
 
-    app(HoldService::class)->hold(User::factory()->create()->id, $tt, 11);   // max=10
+    app(HoldService::class)->hold(User::factory()->create()->id, $sellable, 11);   // max=10
 })->throws(InvalidQuantityException::class);
 
 it('lets exactly one of two simultaneous buyers take the last seat', function (): void {
     $tt = makeOnSaleTicketType(capacity: 1);
+    $sellable = app(SellableTicketTypes::class)->byPublicId($tt->public_id);
     $service = app(HoldService::class);
     [$alice, $bob] = [User::factory()->create(), User::factory()->create()];
 
     $results = [];
     foreach ([$alice, $bob] as $buyer) {
         try {
-            $service->hold($buyer->id, $tt, 1);
+            $service->hold($buyer->id, $sellable, 1);
             $results[] = 'won';
         } catch (InsufficientCapacityException) {
             $results[] = 'lost';
@@ -67,16 +67,13 @@ it('lets exactly one of two simultaneous buyers take the last seat', function ()
 
 it('releases capacity back when the DB step fails (compensation)', function (): void {
     $tt = makeOnSaleTicketType(capacity: 1);
-    $counter = app(CapacityCounter::class);
-    $key = app(HoldService::class)->counterKey($tt->id);
+    $sellable = app(SellableTicketTypes::class)->byPublicId($tt->public_id);
 
-    // شکست DB را با user_id ناموجود مهندسی می‌کنیم — FK می‌ترکد
     try {
-        app(HoldService::class)->hold(999_999, $tt, 1);
+        app(HoldService::class)->hold(999_999, $sellable, 1);   // FK می‌ترکد
     } catch (\Throwable) {
     }
 
-    // جبران باید ظرفیت را برگردانده باشد — خریدار واقعی هنوز می‌تواند بخرد
-    $order = app(HoldService::class)->hold(User::factory()->create()->id, $tt, 1);
+    $order = app(HoldService::class)->hold(User::factory()->create()->id, $sellable, 1);
     expect($order)->toBeInstanceOf(Order::class);
 });

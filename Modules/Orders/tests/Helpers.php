@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+use Modules\Events\Contracts\SellableTicketTypes;
 use Modules\Events\Models\TicketType;
 use Modules\Identity\Models\User;
 use Modules\Orders\Models\Order;
@@ -22,10 +25,15 @@ function makeOnSaleTicketType(int $capacity = 10): TicketType
     return $tt->refresh()->load('prices', 'session');
 }
 
-
-function heldOrder(): Order
+function heldOrder(int $quantity = 2): Order
 {
     $tt = makeOnSaleTicketType();
 
-    return app(HoldService::class)->hold(User::factory()->create()->id, $tt, 2);
+    $sellable = app(SellableTicketTypes::class)->byPublicId($tt->public_id);
+
+    return app(HoldService::class)->hold(
+        userId: User::factory()->create()->id,
+        ticketType: $sellable,
+        quantity: $quantity,
+    );
 }

@@ -63,15 +63,7 @@ it('blocks paying someone else’s order', function (): void {
         ->assertStatus(403);
 });
 
-it('maps insufficient capacity to 409 over HTTP', function (): void {
-    $tt = makeOnSaleTicketType(capacity: 1);
-    Sanctum::actingAs(User::factory()->create());
 
-    $this->postJson(route('api.orders.hold'), [
-        'ticket_type_id' => $tt->public_id,
-        'quantity' => 2,
-    ])->assertStatus(422);   // خارج از ظرفیت ولی داخل بازهٔ min/max؟ نه — quantity=2 > capacity=1 → InsufficientCapacity → 409
-})->skip('سناریو را پایین دقیق کردیم');
 
 it('maps insufficient capacity to 409', function (): void {
     $tt = makeOnSaleTicketType(capacity: 3);

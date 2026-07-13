@@ -1,10 +1,11 @@
 <?php
-declare (strict_types=1);
+
+declare(strict_types=1);
 
 namespace Modules\Orders\Services;
 
 use Illuminate\Support\Facades\DB;
-use Modules\Events\Models\TicketType;
+use Modules\Events\DTOs\SellableTicketType;
 use Modules\Orders\Contracts\CapacityCounter;
 use Modules\Orders\Events\OrderHeld;
 use Modules\Orders\Exceptions\InsufficientCapacityException;
@@ -13,7 +14,6 @@ use Modules\Orders\Models\Order;
 use Modules\Settings\Contracts\SettingsReader;
 use Modules\Shared\Contracts\Clock;
 use Modules\Shared\ValueObjects\Money;
-use Throwable;
 
 final readonly class HoldService
 {
@@ -23,45 +23,40 @@ final readonly class HoldService
         private Clock $clock,
     ) {}
 
-
     /**
      * رزرو ظرفیت + ساخت سفارش Pending با مهلت.
      *
      * @throws InvalidQuantityException
      * @throws InsufficientCapacityException
-     * @throws Throwable
      */
-    public function hold(int $userId, TicketType $ticketType, int $quantity): Order
+    public function hold(int $userId, SellableTicketType $ticketType, int $quantity): Order
     {
-        if ($quantity < $ticketType->min_per_order || $quantity > $ticketType->max_per_order) {
+        if ($quantity < $ticketType->minPerOrder || $quantity > $ticketType->maxPerOrder) {
             throw InvalidQuantityException::outOfBounds(
-                $quantity, $ticketType->min_per_order, $ticketType->max_per_order,
+                $quantity, $ticketType->minPerOrder, $ticketType->maxPerOrder,
             );
         }
 
-        $unitPrice = $ticketType->currentPrice($this->clock->now());
-        if ($unitPrice === null) {
-            throw InsufficientCapacityException::notOnSale($ticketType->public_id);
-        }
-
         $key = $this->counterKey($ticketType->id);
-        $this->capacity->initializeIfMissing($key, $ticketType->remainingCapacity());
+        $this->capacity->initializeIfMissing($key, $ticketType->remainingCapacity);
 
         if (! $this->capacity->tryAcquire($key, $quantity)) {
-            throw InsufficientCapacityException::forTicketType($ticketType->public_id, $quantity);
+            throw InsufficientCapacityException::forTicketType($ticketType->publicId, $quantity);
         }
 
         try {
-            $order = DB::transaction(function () use ($userId, $ticketType, $quantity, $unitPrice): Order {
-                $session = $ticketType->session;
-                $lineTotal = Money::of($unitPrice->amount * $quantity, $unitPrice->currency);
+            $order = DB::transaction(function () use ($userId, $ticketType, $quantity): Order {
+                $lineTotal = Money::of(
+                    $ticketType->currentPrice->amount * $quantity,
+                    $ticketType->currentPrice->currency,
+                );
 
                 $order = new Order([
                     'user_id' => $userId,
-                    'event_id' => $session->event_id,
-                    'session_id' => $session->id,
+                    'event_id' => $ticketType->eventId,
+                    'session_id' => $ticketType->sessionId,
                     'subtotal_amount' => $lineTotal,
-                    'total_amount' => $lineTotal,   // کارمزد/تخفیف در پردهٔ pricing کامل می‌شود
+                    'total_amount' => $lineTotal,
                 ]);
                 $order->forceFill([
                     'hold_expires_at' => $this->clock->now()->addMinutes(
@@ -72,15 +67,14 @@ final readonly class HoldService
                 $order->items()->create([
                     'ticket_type_id' => $ticketType->id,
                     'quantity' => $quantity,
-                    'unit_amount_snapshot' => $unitPrice,
+                    'unit_amount_snapshot' => $ticketType->currentPrice,
                     'ticket_type_name_snapshot' => $ticketType->name,
                     'line_total_amount' => $lineTotal,
                 ]);
 
                 return $order;
             });
-        } catch (Throwable $e) {
-            // جبران: DB شکست → ظرفیت Redis را پس بده، وگرنه صندلی «گم» می‌شود
+        } catch (\Throwable $e) {
             $this->capacity->release($key, $quantity);
             throw $e;
         }
@@ -98,7 +92,4 @@ final readonly class HoldService
     {
         return "orders:capacity:tt:{$ticketTypeId}";
     }
-
-
-
 }

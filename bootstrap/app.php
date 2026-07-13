@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Modules\Events\Exceptions\IllegalEventTransitionException;
 use Modules\Events\Exceptions\InvalidEventScheduleException;
 use Modules\Events\Exceptions\OrganizerNotActiveException;
+use Modules\Events\Exceptions\TicketTypeNotSellableException;
 use Modules\Events\Exceptions\VenueRequiredException;
 use Modules\Identity\Exceptions\AccountNotAllowedException;
 use Modules\Identity\Exceptions\InvalidOtpException;
@@ -85,5 +86,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (PaymentNotPayableException $e) {
             return response()->json(['message' => 'مشکل پرداختی به وجود آمد'], 402);
+        });
+
+        $exceptions->render(function (TicketTypeNotSellableException $e) {
+            return response()->json(['message' => 'این بلیت در حال حاضر قابل خرید نیست.'], 409);
         });
     })->create();

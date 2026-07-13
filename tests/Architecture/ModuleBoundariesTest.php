@@ -7,7 +7,7 @@ declare(strict_types=1);
  * لایه‌های PUBLIC هر ماژول: Contracts, DTOs, Events, Enums, Exceptions.
  * همهٔ اینها به‌جز Shared که عمداً برای همه باز است.
  */
-$modules = ['Identity']; // با اضافه شدن هر ماژول، به این لیست اضافه می‌شود
+$modules = ['Identity','Orders','Events','Ticketing']; // با اضافه شدن هر ماژول، به این لیست اضافه می‌شود
 
 foreach ($modules as $module) {
     arch("{$module}: models never cross the boundary")

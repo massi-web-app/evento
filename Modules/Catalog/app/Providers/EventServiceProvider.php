@@ -3,11 +3,8 @@
 namespace Modules\Catalog\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 use Modules\Catalog\Events\CategoryTreeChanged;
 use Modules\Catalog\Listeners\FlushCategoryTreeCache;
-use Modules\Events\Models\Event;
-use Modules\Events\Policies\EventPolicy;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -37,9 +34,5 @@ class EventServiceProvider extends ServiceProvider
     {
     }
 
-    public function boot(): void
-    {
-        Gate::policy(Event::class, EventPolicy::class);
-        parent::boot();
-    }
+
 }

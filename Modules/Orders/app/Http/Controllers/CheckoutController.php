@@ -10,7 +10,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Modules\Events\Models\TicketType;
+use Modules\Events\Contracts\SellableTicketTypes;
+use Modules\Events\Exceptions\TicketTypeNotSellableException;
 use Modules\Orders\Exceptions\PaymentVerificationFailedException;
 use Modules\Orders\Http\Requests\HoldOrderRequest;
 use Modules\Orders\Http\Requests\InitiatePaymentRequest;
@@ -22,13 +23,12 @@ use Modules\Orders\Services\PaymentService;
 final  class CheckoutController extends Controller
 {
     use AuthorizesRequests;
-    public function hold(HoldOrderRequest $request, HoldService $holdService): JsonResponse
+    public function hold(HoldOrderRequest $request, HoldService $holdService,SellableTicketTypes $sellables): JsonResponse
     {
-        /** @var TicketType $ticketType */
-        $ticketType = TicketType::query()
-            ->where('public_id', $request->ticketTypePublicId())
-            ->with(['prices', 'session'])
-            ->firstOrFail();
+
+
+        $ticketType = $sellables->byPublicId($request->ticketTypePublicId());
+
 
         $order = $holdService->hold(
             userId: (int) $request->user()->getAuthIdentifier(),

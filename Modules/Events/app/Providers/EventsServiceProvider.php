@@ -2,6 +2,11 @@
 
 namespace Modules\Events\Providers;
 
+use Illuminate\Support\Facades\Gate;
+use Modules\Events\Contracts\SellableTicketTypes;
+use Modules\Events\Models\Event;
+use Modules\Events\Policies\EventPolicy;
+use Modules\Events\Services\DatabaseSellableTicketTypes;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 
@@ -36,11 +41,27 @@ class EventsServiceProvider extends ModuleServiceProvider
 
     /**
      * Define module schedules.
-     * 
+     *
      * @param $schedule
      */
     // protected function configureSchedules(Schedule $schedule): void
     // {
     //     $schedule->command('inspire')->hourly();
     // }
+
+    public function boot(): void
+    {
+        Gate::policy(Event::class, EventPolicy::class);
+        parent::boot();
+    }
+
+    public function register(): void
+    {
+        parent::register();
+        $this->app->singleton(
+            SellableTicketTypes::class,
+            DatabaseSellableTicketTypes::class
+        );
+
+    }
 }
