@@ -4,7 +4,7 @@ namespace Modules\Orders\DTOs;
 
 use Spatie\LaravelData\Data;
 
-class PaidOrderItemSnapshot extends Data
+final class PaidOrderItemSnapshot extends Data
 {
 
     public function __construct(

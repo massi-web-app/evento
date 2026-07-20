@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Orders\Services;
 
+use Illuminate\Support\Facades\DB;
 use Modules\Orders\Contracts\PaidOrderReader;
 use Modules\Orders\DTOs\PaidOrderItemSnapshot;
 use Modules\Orders\DTOs\PaidOrderSnapshot;
@@ -26,9 +27,14 @@ final class DatabasePaidOrderReader implements PaidOrderReader
             throw OrderNotPaidException::forPublicId($orderPublicId);
         }
 
+        $organizerId = (int) DB::table('events')
+            ->where('id', $order->event_id)
+            ->value('organizer_id');
+
         return new PaidOrderSnapshot(
             userId: $order->user_id,
             eventId: $order->event_id,
+            organizerId: $organizerId,
             sessionId: $order->session_id,
             items: $order->items->map(fn ($i) => new PaidOrderItemSnapshot(
                 orderItemId: $i->id,

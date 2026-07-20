@@ -13,6 +13,7 @@ final class PaidOrderSnapshot extends Data
     public function __construct(
         public readonly int $userId,
         public readonly int $eventId,
+        public readonly int $organizerId,
         public readonly int $sessionId,
         public readonly array $items,
     ) {}
